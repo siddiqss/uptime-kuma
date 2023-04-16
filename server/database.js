@@ -74,6 +74,8 @@ class Database {
         "patch-add-description-monitor.sql": true,
         "patch-api-key-table.sql": true,
         "patch-monitor-tls.sql": true,
+        "patch-add-index-status-column.sql": true,
+        "patch-add-heartbeat-index-table.sql": false
     };
 
     /**

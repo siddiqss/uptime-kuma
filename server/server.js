@@ -144,8 +144,10 @@ const { Settings } = require("./settings");
 const { CacheableDnsHttpAgent } = require("./cacheable-dns-http-agent");
 const { pluginsHandler } = require("./socket-handlers/plugins-handler");
 const apicache = require("./modules/apicache");
+const cors = require("cors");
 
 app.use(express.json());
+app.use(cors());
 
 // Global Middleware
 app.use(function (req, res, next) {
@@ -251,6 +253,10 @@ let needSetup = false;
     // Status Page Router
     const statusPageRouter = require("./routers/status-page-router");
     app.use(statusPageRouter);
+
+    // Google Index Router
+    const googleIndexRouter = require("./routers/google-index-router");
+    app.use(googleIndexRouter);
 
     // Universal Route Handler, must be at the end of all express routes.
     app.get("*", async (_request, response) => {
@@ -692,6 +698,7 @@ let needSetup = false;
                 bean.tlsCert = monitor.tlsCert;
                 bean.tlsKey = monitor.tlsKey;
                 bean.interval = monitor.interval;
+                bean.indexStatus = monitor.indexStatus;
                 bean.retryInterval = monitor.retryInterval;
                 bean.resendInterval = monitor.resendInterval;
                 bean.hostname = monitor.hostname;
@@ -862,6 +869,25 @@ let needSetup = false;
                 callback({
                     ok: true,
                     msg: "Paused Successfully.",
+                });
+
+            } catch (e) {
+                callback({
+                    ok: false,
+                    msg: e.message,
+                });
+            }
+        });
+
+        socket.on("checkIndexStatus", async (monitorID, callback) => {
+            try {
+                checkLogin(socket);
+                // await pauseMonitor(socket.userID, monitorID);
+                await server.sendMonitorList(socket);
+
+                callback({
+                    ok: true,
+                    msg: "Sent monitor list.",
                 });
 
             } catch (e) {
