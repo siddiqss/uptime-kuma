@@ -316,6 +316,11 @@
                                 </div>
                             </template>
 
+                            <!-- <div class="my-3">
+                                <label for="google-interval" class="form-label">{{ $t("Google Index Check Interval (checks every week)") }}</label>
+                                <input id="google-interval" v-model="monitor.google_interval" type="number" class="form-control" required :min="minInterval" step="1" :max="maxInterval">
+                            </div> -->
+
                             <!-- Interval -->
                             <div class="my-3">
                                 <label for="interval" class="form-label">{{ $t("Heartbeat Interval") }} ({{ $t("checkEverySecond", [ monitor.interval ]) }})</label>
@@ -905,6 +910,7 @@ message HealthCheckResponse {
                     url: "https://",
                     method: "GET",
                     interval: 60,
+                    indexStatus: 0,
                     retryInterval: this.interval,
                     resendInterval: 0,
                     maxretries: 0,

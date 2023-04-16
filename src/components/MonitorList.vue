@@ -6,32 +6,77 @@
                 <a v-if="searchText == ''" class="search-icon">
                     <font-awesome-icon icon="search" />
                 </a>
-                <a v-if="searchText != ''" class="search-icon" @click="clearSearchText">
+                <a
+                    v-if="searchText != ''"
+                    class="search-icon"
+                    @click="clearSearchText"
+                >
                     <font-awesome-icon icon="times" />
                 </a>
                 <form>
-                    <input v-model="searchText" class="form-control search-input" :placeholder="$t('Search...')" autocomplete="off" />
+                    <input
+                        v-model="searchText"
+                        class="form-control search-input"
+                        :placeholder="$t('Search...')"
+                        autocomplete="off"
+                    />
                 </form>
             </div>
         </div>
         <div class="monitor-list" :class="{ scrollbar: scrollbar }">
-            <div v-if="Object.keys($root.monitorList).length === 0" class="text-center mt-3">
-                {{ $t("No Monitors, please") }} <router-link to="/add">{{ $t("add one") }}</router-link>
+            <div
+                v-if="Object.keys($root.monitorList).length === 0"
+                class="text-center mt-3"
+            >
+                {{ $t("No Monitors, please") }}
+                <router-link to="/add">{{ $t("add one") }}</router-link>
             </div>
 
-            <router-link v-for="(item, index) in sortedMonitorList" :key="index" :to="monitorURL(item.id)" class="item" :class="{ 'disabled': ! item.active }" :title="item.description">
+            <router-link
+                v-for="(item, index) in sortedMonitorList"
+                :key="index"
+                :to="monitorURL(item.id)"
+                class="item"
+                :class="{ disabled: !item.active }"
+                :title="item.description"
+            >
                 <div class="row">
-                    <div class="col-9 col-md-8 small-padding" :class="{ 'monitor-item': $root.userHeartbeatBar == 'bottom' || $root.userHeartbeatBar == 'none' }">
+                    <div
+                        class="col-9 col-md-8 small-padding"
+                        :class="{
+                            'monitor-item':
+                                $root.userHeartbeatBar == 'bottom' ||
+                                $root.userHeartbeatBar == 'none',
+                        }"
+                    >
                         <div class="info">
                             <Uptime :monitor="item" type="24" :pill="true" />
                             {{ item.name }}
                         </div>
                         <div class="tags">
-                            <Tag v-for="tag in item.tags" :key="tag" :item="tag" :size="'sm'" />
+                            <Tag
+                                v-for="tag in item.tags"
+                                :key="tag"
+                                :item="tag"
+                                :size="'sm'"
+                            />
                         </div>
                     </div>
-                    <div v-show="$root.userHeartbeatBar == 'normal'" :key="$root.userHeartbeatBar" class="col-3 col-md-4">
+                    <div
+                        v-show="$root.userHeartbeatBar == 'normal'"
+                        :key="$root.userHeartbeatBar"
+                        class="col-3 col-md-4"
+                    >
                         <HeartbeatBar size="small" :monitor-id="item.id" />
+
+                        <div v-if="item.indexStatus===1">
+                            Indexed
+                            <font-awesome-icon :style="{color: 'green'}" icon="check" />
+                        </div>
+                        <div v-if="item.indexStatus===0">
+                            Indexed
+                            <font-awesome-icon :style="{color: 'red'}" icon="times" />
+                        </div>
                     </div>
                 </div>
 
@@ -85,14 +130,12 @@ export default {
                     height: "calc(100vh - 160px)",
                 };
             }
-
         },
 
         sortedMonitorList() {
             let result = Object.values(this.$root.monitorList);
 
             result.sort((m1, m2) => {
-
                 if (m1.active !== m2.active) {
                     if (m1.active === 0) {
                         return 1;
@@ -120,10 +163,21 @@ export default {
             // finds monitor name, tag name or tag value
             if (this.searchText !== "") {
                 const loweredSearchText = this.searchText.toLowerCase();
-                result = result.filter(monitor => {
-                    return monitor.name.toLowerCase().includes(loweredSearchText)
-                    || monitor.tags.find(tag => tag.name.toLowerCase().includes(loweredSearchText)
-                    || tag.value?.toLowerCase().includes(loweredSearchText));
+                result = result.filter((monitor) => {
+                    return (
+                        monitor.name
+                            .toLowerCase()
+                            .includes(loweredSearchText) ||
+                        monitor.tags.find(
+                            (tag) =>
+                                tag.name
+                                    .toLowerCase()
+                                    .includes(loweredSearchText) ||
+                                tag.value
+                                    ?.toLowerCase()
+                                    .includes(loweredSearchText)
+                        )
+                    );
                 });
             }
 
@@ -156,7 +210,7 @@ export default {
         /** Clear the search bar */
         clearSearchText() {
             this.searchText = "";
-        }
+        },
     },
 };
 </script>
@@ -238,5 +292,4 @@ export default {
     padding-left: 67px;
     margin-top: 5px;
 }
-
 </style>
