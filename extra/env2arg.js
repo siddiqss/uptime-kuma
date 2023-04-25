@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-
+require("dotenv").config();
 const childProcess = require("child_process");
 let env = process.env;
 
